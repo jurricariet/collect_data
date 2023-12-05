@@ -1,2 +1,5 @@
 # collect_data
-Acceso a indicadores de distintos organismos
+
+Access to indicators from different sources through APIs, file downloads, etc.
+
+1. [OECD: Composite leading indicators](https://github.com/jurricariet/collect_data/blob/main/scripts/oecd.R) through OECD API with `rsdmx` package
