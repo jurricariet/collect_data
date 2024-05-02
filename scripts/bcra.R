@@ -4,7 +4,7 @@ library(tidyverse)
 library(jsonlite)
 
 variables <- GET(glue::glue('https://api.bcra.gob.ar/estadisticas/v1/PrincipalesVariables'))
-lista_variables <- as.data.frame(fromJSON(rawToChar(variables$content)))
+lista_variables <- as.data.frame(fromJSON(rawToChar(variables$content))[[1]])
 
 id_variable <- 1
 fecha_desde <- '1990-01-01'
