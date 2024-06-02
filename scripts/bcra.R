@@ -3,17 +3,19 @@ library(httr)
 library(tidyverse)
 library(jsonlite)
 
-variables <- GET(glue::glue('https://api.bcra.gob.ar/estadisticas/v1/PrincipalesVariables'))
-lista_variables <- as.data.frame(fromJSON(rawToChar(variables$content))[[1]])
+variables <- GET(glue::glue('https://api.bcra.gob.ar/estadisticas/v2.0/PrincipalesVariables'))
+lista_variables <- as.data.frame(fromJSON(rawToChar(variables$content)))
+
+# La v2.0 de la API devuelve solo 1 año de observaciones
 
 id_variable <- 1
-fecha_desde <- '1990-01-01'
+fecha_desde <- '2024-01-01'
 fecha_hasta <- Sys.Date()
 
-data_api <- GET(glue::glue('https://api.bcra.gob.ar/estadisticas/v1/DatosVariable/{id_variable}/{fecha_desde}/{Sys.Date()}'))
+data_api <- GET(glue::glue('https://api.bcra.gob.ar/estadisticas/v2.0/DatosVariable/{id_variable}/{fecha_desde}/{Sys.Date()}'))
 
 data <-  as.data.frame(fromJSON(rawToChar(data_api$content))$results) %>% 
-  mutate(fecha = lubridate::dmy(fecha),
+  mutate(fecha = as.Date(fecha),
          valor = as.numeric(valor))
 
 
