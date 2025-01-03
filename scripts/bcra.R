@@ -3,7 +3,7 @@ library(httr)
 library(tidyverse)
 library(jsonlite)
 
-variables <- GET(glue::glue('https://api.bcra.gob.ar/estadisticas/v2.0/PrincipalesVariables'))
+variables <- GET(glue::glue('https://api.bcra.gob.ar/estadisticas/v3.0/Monetarias'))
 lista_variables <- as.data.frame(fromJSON(rawToChar(variables$content)))
 
 # La v2.0 de la API devuelve solo 1 año de observaciones
