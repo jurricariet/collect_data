@@ -1,18 +1,19 @@
-# API BCRA: https://www.bcra.gob.ar/Catalogo/apis.asp?fileName=principales-variables-v1
+# API BCRA: https://www.bcra.gob.ar/Catalogo/apis.asp?fileName=principales-variables-v3
+
 library(httr)
 library(tidyverse)
 library(jsonlite)
 
 variables <- GET(glue::glue('https://api.bcra.gob.ar/estadisticas/v3.0/Monetarias'))
-lista_variables <- as.data.frame(fromJSON(rawToChar(variables$content)))
+text <- rawToChar(variables$content)
+Encoding(text) <- "UTF-8"
+lista_variables <- as.data.frame(fromJSON(text))
 
-# La v2.0 de la API devuelve solo 1 año de observaciones
 
-id_variable <- 1
-fecha_desde <- '2024-01-01'
-fecha_hasta <- Sys.Date()
 
-data_api <- GET(glue::glue('https://api.bcra.gob.ar/estadisticas/v2.0/DatosVariable/{id_variable}/{fecha_desde}/{Sys.Date()}'))
+id_variable <- 126
+
+data_api <- GET(glue::glue('https://api.bcra.gob.ar/estadisticas/v3.0/Monetarias/{id_variable}/'))
 
 data <-  as.data.frame(fromJSON(rawToChar(data_api$content))$results) %>% 
   mutate(fecha = as.Date(fecha),
@@ -22,6 +23,6 @@ data <-  as.data.frame(fromJSON(rawToChar(data_api$content))$results) %>%
 ggplot(data,aes(x=fecha,y=valor,group=1))+
   geom_line()+
   scale_y_continuous()+
-  labs(x='',y='',title='Reservas Internacionales del BCRA',
-       subtitle='En miles de millones de dólares - cifras provisorias sujetas a cambio de valuación')+
+  labs(x='',y='',title=glue::glue('{lista_variables %>% filter(results.idVariable == id_variable) %>% pull(results.descripcion)}'),
+       subtitle='')+
   theme_minimal()
